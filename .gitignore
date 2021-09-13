@@ -1,0 +1,4 @@
+/db.sqlite3
+database/__pycache__/
+songs/__pycache__/
+database/migrations/__pycache__/
