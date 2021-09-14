@@ -1,0 +1,24 @@
+{% extends "database/layout.html" %}
+
+{% block body %}
+
+<style>
+
+</style>
+
+<div class="container">
+
+    <a href="{% url 'edit' id=song.id %}" class="btn btn-outline-primary">Edit</a>
+
+    <div class="title" id="title">{{ song.title }}</div>
+    <div class="content" id="content">{{ song.content }}</div>
+    <div>
+        <div id="author">{{song.author}}</div>
+        <div id="composer">{{song.composer}}</div>
+        <div id="meter">{{song.meter}}</div>
+        <div id="key">{{song.key}}</div>
+        <div id="year">{{song.year}}</div>
+    </div>
+</div>
+
+{% endblock %}

@@ -2,15 +2,42 @@
 
 {% block body %}
 
-    <div class="container">
-    <h2>Songs</h2>
+    <style>
+        .search-div {
+            max-width:500px
+        }
 
-    {% if message %}
-        <div>{{ message }}</div>
-    {% endif %}
+        .song-item:nth-child(even) {
+            background-color:beige;
+            width: 100%
+        }
+        .song-item {
+            padding:3px;
+        }
+
+    </style>
+
+    <div class="container">
+        <div class="text-center col-sm-8 m-auto search-div">
+            <h2>Songs</h2>
+            <input class="search m-3 p-1 w-100" autofocus placeholder="Type to search"/>
+            <div id="song-list" class="song-item-group">
+                
+                {% for song in songs %}
+                    <div class="song-item" id="{{song.id}}"><a href="{% url 'song' id=song.id %}">{{song.title}}</a></div>
+                {% empty %}
+                    List of songs to appear here
+                {% endfor %}
+         
+            </div>
+        </div>
 
     The index page
 
     </div>
 
 {% endblock %}
+
+
+
+

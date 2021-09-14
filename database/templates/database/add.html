@@ -1,0 +1,40 @@
+{% extends "database/layout.html" %}
+
+{% block body %}
+
+<style>
+    .error {
+        color:red
+    }
+</style>
+
+<div class="container mt-3">
+    
+    {% if edit %}
+        <form method="post" action="{% url 'edit' id=id%}">
+    {% else %}
+        <form method="post" action="{% url 'add' %}">
+    {% endif %}
+        
+        {% csrf_token %}
+        <div class="mb-3 col-sm-10 col-md-10 m-auto">
+
+            {% for field in form %}
+            <div class="error">{{ field.errors }}</div>  
+            <div class="input-group mb-3">
+                <label for="{{ field.name}}" class="input-group-text col-sm-4 col-md-2">{{ field.label}}</label>
+                {{ field }}
+                
+            </div> 
+            
+            {% endfor %}
+
+            <input type="submit" class="btn btn-primary" value="save">
+
+        </div>
+    </form>
+
+</div>
+
+
+{% endblock %}
