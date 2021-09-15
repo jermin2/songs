@@ -103,3 +103,13 @@ function createSongBookElement(song) {
     e.onclick = () => {remove_song_to_book(song.id) }
     return e
 }
+
+// Confirm deleting book
+function confirmDeleteBook(event){
+    if (confirm('Are you sure you want to delete this book forever?')) {
+        return true
+        } else {
+        window.event.preventDefault()
+        return false
+    }
+}

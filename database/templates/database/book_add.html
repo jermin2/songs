@@ -14,13 +14,13 @@
     <div class="col-md-6">
         {% if user.is_authenticated %}
         <a href="{% url 'book' id=book.id %}" class="btn btn-outline-primary">Back</a>
-        <a href="#" class="btn btn-outline-secondary">Delete</a>
+        <a href="{% url 'book_delete' id=book.id %}" class="btn btn-outline-secondary" onclick="confirmDeleteBook()">Delete</a>
         {% endif %}
 
         <h2>{{book.title}}</h2>
 
         <div id="book-song-list">
-        {% for record in booklist %}
+        {% for record in songsinbook %}
             <div class="book-item" id="id-{{record.song.id}}" data-id="{{record.song.id}}">{{record.song.title}}</div>
         {% empty %}
 

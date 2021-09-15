@@ -252,15 +252,14 @@ def add_book(request):
 
 def book_view(request, id):
 
-    book_1 = Book.objects.get(id=id)
-    print(book_1.title)
+    book = Book.objects.get(id=id)
 
     # Get all the song and relevant info
-    book = Song_Book.objects.filter(book=book_1).select_related()
+    songsinbook = Song_Book.objects.filter(book=book).select_related()
 
     return render(request, "database/book.html", {
-        "book":book,
-        "id":id
+        "songsinbook":songsinbook,
+        "book":book
     })
 
 def books_view(request):
@@ -276,10 +275,10 @@ def book_edit(request, id):
 
     book = Book.objects.get(id=id)
     # Get all the song and relevant info
-    booklist = Song_Book.objects.filter(book=book).select_related()
+    songsinbook = Song_Book.objects.filter(book=book).select_related()
 
     return render(request, "database/book_add.html", {
-        "booklist":booklist,
+        "songsinbook":songsinbook,
         "songs":Song.objects.all(),
         "book":book
     })
@@ -329,6 +328,14 @@ def song_to_book(request):
     })
 
     
+@login_required
+@csrf_exempt
+def book_delete(request, id):
+    book = Book.objects.get(id=id).delete()
+
+    return HttpResponseRedirect(reverse("books"))
+
+
 class BookForm(forms.Form):
     title =     forms.CharField(label='Title',      max_length=100, widget=forms.TextInput(attrs={'class': 'col-md-6 form-control'}))
     year =      forms.IntegerField(label='Year',    required=False, widget=forms.TextInput(attrs={'class':'col-md-6 form-control'}))
