@@ -3,11 +3,13 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 from django import forms
 from django.http import JsonResponse
+import json
 
-from .models import User, Song
+from .models import User, Song, Book, Song_Book
 
 def index(request):
 
@@ -127,7 +129,8 @@ def edit(request, id):
         return render(request, "database/add.html", {
             "id":id,
             "form":form,
-            "edit":True
+            "route":"edit",
+            "title":"Edit Song"
         })
     
     # GET request
@@ -147,7 +150,8 @@ def edit(request, id):
         return render(request, "database/add.html",{ 
             "id":id,
             "form":form,
-            "edit":True
+            "route":"edit",
+            "title":"Edit Song"
         })
 
 
@@ -191,11 +195,13 @@ def add(request):
             
         # If form is invalid
         return render(request, "database/add.html", {
-            "form":form
+            "form":form,
+            "title": "Add Song",
         })
 
     return render(request, "database/add.html", {
-        "form":SongForm()
+        "form":SongForm(),
+        "title": "Add Song",
     })
 
 def fetch_songs(request):
@@ -205,8 +211,127 @@ def fetch_songs(request):
         "success":"This worked",
         "song_list":[s.mini_serialize() for s in Song.objects.all()]
     })
-    
 
+@login_required
+def add_book(request):
+
+    if request.method=="POST":
+        # Take in the data the user submitted and save it as form
+        form = BookForm(request.POST)
+
+        # Check if form is valid
+        if form.is_valid():
+            # Isolate the data from the 'cleaned' version
+            title = form.cleaned_data["title"]
+            year = form.cleaned_data["year"]
+
+            try:
+                book = Book.objects.create(
+                    title=title,
+                    year=year
+                )
+                book.save()
+                return HttpResponseRedirect(reverse("index"))
+
+            except Exception as e:
+                print(e)
+                return HttpResponse(e)
+
+        # If form is invalid
+        return render(request, "database/add.html", {
+            "form":form,
+            "title": "New Book",
+            "route": "add_book"
+        })
+
+    return render(request, "database/add.html", {
+        "title": "New Book",
+        "form":BookForm(),
+        "route": "add_book"
+    })
+
+def book_view(request, id):
+
+    book_1 = Book.objects.get(id=id)
+    print(book_1.title)
+
+    # Get all the song and relevant info
+    book = Song_Book.objects.filter(book=book_1).select_related()
+
+    return render(request, "database/book.html", {
+        "book":book,
+        "id":id
+    })
+
+def books_view(request):
+
+    books = Book.objects.all()
+
+    return render(request, "database/books.html", {
+        "books":books
+    })
+
+@login_required
+def book_edit(request, id):
+
+    book = Book.objects.get(id=id)
+    # Get all the song and relevant info
+    booklist = Song_Book.objects.filter(book=book).select_related()
+
+    return render(request, "database/book_add.html", {
+        "booklist":booklist,
+        "songs":Song.objects.all(),
+        "book":book
+    })
+    return HttpResponse("Edit book")
+
+@login_required
+@csrf_exempt
+def song_to_book(request):
+    if request.method != "POST":
+        print(request)
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get new post data
+    data = json.loads(request.body)
+    print(data)
+
+
+    # # SHould be able to add
+    # # should be able to remove
+    book_id = data.get("book_id")
+    song_id = data.get("song_id")
+
+    # Get the book to change
+    book = Book.objects.get(id=book_id)
+
+    # Get the song to change
+    song = Song.objects.get(id=song_id)
+
+    # Add the song to the book
+    try:
+        if data.get("method") == "add":
+            book.songs.add(song)
+        elif data.get("method") == "remove":
+            book.songs.remove(song)
+        book.save()
+
+    except Exception as e:
+        return JsonResponse({
+            "fail":e
+        })
+
+    # Return JsonResponse of new book list
+    return JsonResponse({
+        "success":"Adding song to book",
+        "songs":[book.mini_serialize() for book in book.songs.all()],
+        "song":song.mini_serialize()
+    })
+
+    
+class BookForm(forms.Form):
+    title =     forms.CharField(label='Title',      max_length=100, widget=forms.TextInput(attrs={'class': 'col-md-6 form-control'}))
+    year =      forms.IntegerField(label='Year',    required=False, widget=forms.TextInput(attrs={'class':'col-md-6 form-control'}))
 
 class SongForm(forms.Form):
     title =     forms.CharField(label='Title',      max_length=100, widget=forms.TextInput(attrs={'class': 'col-md-6 form-control'}))

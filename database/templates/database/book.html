@@ -1,0 +1,26 @@
+{% extends "database/layout.html" %}
+
+{% block body %}
+
+<style>
+
+</style>
+
+<div class="container">
+    {% if user.is_authenticated %}
+    <a href="{% url 'book_edit' id=id %}" class="btn btn-outline-primary">Edit</a>
+    <a href="#" class="btn btn-outline-secondary">Delete</a>
+    {% endif %}
+
+    <h2>{{book.first.book.title}}</h2>
+
+    {% for record in book %}
+        <div class="song" id="id-{{record.song.id}}"><a href="{% url 'song' id=record.song.id %}">{{record.song.title}}</a></div>
+    {% empty %}
+        There are no books
+    {% endfor %}
+
+</div>
+
+
+{% endblock %}

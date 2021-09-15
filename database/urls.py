@@ -10,5 +10,10 @@ urlpatterns = [
     path('song/<int:id>', views.song_view, name="song"),
     path('add', views.add, name="add"),
     path('edit/<int:id>', views.edit, name="edit"),
-    path('fetch_songs', views.fetch_songs, name="fetch_songs")
+    path('fetch_songs', views.fetch_songs, name="fetch_songs"),
+    path('book/add', views.add_book, name="add_book"),
+    path('book/<int:id>', views.book_view, name="book"),
+    path('books', views.books_view, name="books"),
+    path('book/<int:id>/edit', views.book_edit, name="book_edit"),
+    path('song_to_book', views.song_to_book, name="song_to_book")
 ]

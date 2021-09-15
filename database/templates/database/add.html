@@ -10,14 +10,22 @@
 
 <div class="container mt-3">
     
-    {% if edit %}
+
+
+    {% if route == 'edit' %}
         <form method="post" action="{% url 'edit' id=id%}">
+    {% elif route == 'add_book' %}
+        <form method="post" action="{% url 'add_book' %}">
     {% else %}
         <form method="post" action="{% url 'add' %}">
     {% endif %}
         
         {% csrf_token %}
         <div class="mb-3 col-sm-10 col-md-10 m-auto">
+
+            {% if title %}
+                <h2>{{ title }}</h2>
+            {% endif %}
 
             {% for field in form %}
             <div class="error">{{ field.errors }}</div>  

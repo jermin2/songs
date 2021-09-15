@@ -4,3 +4,4 @@ songs/__pycache__/
 database/migrations/__pycache__/
 database/migrations/
 database/migrations/0001_initial.py
+database/templates/database/song.html

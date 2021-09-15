@@ -9,19 +9,20 @@ class User(AbstractUser):
 class Book(models.Model):
     title =     models.CharField(max_length=255)
     songs =     models.ManyToManyField('Song', through='Song_Book', related_name="books")
+    year =      models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.title}({self.songs.count()})'
 
 
 class Song_Book(models.Model):
-    song =  models.ForeignKey('Song', on_delete=models.CASCADE, related_name="books")
-    book =  models.ForeignKey('Book', on_delete=models.CASCADE, related_name='songs')
-    index = models.IntegerField(max_length=10, blank=True, null=True)
+    song =  models.ForeignKey('Song', on_delete=models.CASCADE, related_name="bookInfo")
+    book =  models.ForeignKey('Book', on_delete=models.CASCADE)
+    index = models.IntegerField(blank=True, null=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['song', 'book'])
+            models.UniqueConstraint(fields=['song', 'book'], name='unique_song_in_book')
         ]
 
     def __str__(self):
@@ -33,7 +34,7 @@ class Song(models.Model):
     composer =  models.CharField(max_length=255, blank=True)
     meter =     models.CharField(max_length=255, blank=True)
     key =       models.CharField(max_length=10, blank=True)
-    year =      models.IntegerField(max_length=10, blank=True, null=True)
+    year =      models.IntegerField(blank=True, null=True)
     content =   models.CharField(max_length=1024)
 
     def __str__(self):

@@ -1,0 +1,83 @@
+{% extends "database/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<style>
+    .selected {
+        background-color:silver
+    }
+</style>
+
+{{ book.id|json_script:"book_id" }}
+<div class="container col-md-12 row">
+    <div class="col-md-6">
+        {% if user.is_authenticated %}
+        <a href="{% url 'book' id=book.id %}" class="btn btn-outline-primary">Back</a>
+        <a href="#" class="btn btn-outline-secondary">Delete</a>
+        {% endif %}
+
+        <h2>{{book.title}}</h2>
+
+        <div id="book-song-list">
+        {% for record in booklist %}
+            <div class="book-item" id="id-{{record.song.id}}" data-id="{{record.song.id}}">{{record.song.title}}</div>
+        {% empty %}
+
+        {% endfor %}
+        </div>
+
+    </div>
+
+
+
+    <div class="col-md-6">
+        <div class="text-center col-sm-8 m-auto search-div">
+            <h2>Songs</h2>
+            <input class="search m-3 p-1 w-100" id="search" autofocus placeholder="Type to search"/>
+            <div id="song-list" class="song-item-group">
+                
+                {% for song in songs %}
+                    <div class="song-item" id="id-{{song.id}}" data-id="{{song.id}}">{{song.title}}</div>
+                {% empty %}
+                    List of songs to appear here
+                {% endfor %}
+        
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{% static 'database/database.js' %}?v=8"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function(){
+        console.log("loaded")
+
+        document.querySelectorAll('.song-item').forEach( element => {
+            element.onclick = () => {
+                console.log(element.dataset.id)
+                if(!element.classList.contains("selected")){
+                    add_song_to_book(element.dataset.id)
+                }
+                
+            }
+        })
+
+        const song_list = document.querySelector('#song-list')
+
+        document.querySelectorAll('.book-item').forEach( element => {
+            element.onclick = () => {
+                remove_song_to_book(element.dataset.id)
+            }
+
+            // Hide the song in the song list if its in the book list
+            song_list.querySelector(`#id-${element.dataset.id}`).classList.add("selected")
+
+
+
+        })
+    })
+</script>
+
+{% endblock %}
