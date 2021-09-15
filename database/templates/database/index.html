@@ -49,9 +49,11 @@
 
                 // Find all the ones that DON"T match (returns -1)
                 const filtered_list = song_list.filter(song => {
-                    console.log(song.title.search(re))
+
+                    // Choose whether to display
                     display = song.title.search(re) >= 0
                     if (display){
+                        // 
                         document.querySelector(`#id-${song.id}`).style.display = "block"
                     }
                     else
