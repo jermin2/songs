@@ -3,3 +3,4 @@ database/__pycache__/
 songs/__pycache__/
 database/migrations/__pycache__/
 database/migrations/
+database/migrations/0001_initial.py

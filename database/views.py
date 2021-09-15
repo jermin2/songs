@@ -169,7 +169,7 @@ def add(request):
             key = form.cleaned_data["key"]
             meter = form.cleaned_data["meter"]
             year = form.cleaned_data["year"]
-            year = int(year) if year != None else ""
+            year = int(year) if year != None else None
             content = form.cleaned_data["content"]
 
             try:
