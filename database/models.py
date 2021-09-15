@@ -14,3 +14,22 @@ class Song(models.Model):
     year =      models.CharField(max_length=10, blank=True)
     content =   models.CharField(max_length=1024)
 
+    def serialize(self):
+        return ({
+            "title":self.title,
+            "author":self.author,
+            "composer":self.composer,
+            "meter":self.meter,
+            "key":self.key,
+            "year":self.year,
+            "content":self.content,
+            "id":self.id
+        })
+
+    # Return a short serialization of just id and title
+    def mini_serialize(self):
+        return ({
+            "id":self.id,
+            "title":self.title
+        })
+

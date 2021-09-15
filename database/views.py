@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django import forms
-
+from django.http import JsonResponse
 
 from .models import User, Song
 
@@ -196,6 +196,14 @@ def add(request):
 
     return render(request, "database/add.html", {
         "form":SongForm()
+    })
+
+def fetch_songs(request):
+
+    # Return a list of songs
+    return JsonResponse({
+        "success":"This worked",
+        "song_list":[s.mini_serialize() for s in Song.objects.all()]
     })
     
 

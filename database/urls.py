@@ -9,5 +9,6 @@ urlpatterns = [
     path('register', views.register_view, name='register'),
     path('song/<int:id>', views.song_view, name="song"),
     path('add', views.add, name="add"),
-    path('edit/<int:id>', views.edit, name="edit")
+    path('edit/<int:id>', views.edit, name="edit"),
+    path('fetch_songs', views.fetch_songs, name="fetch_songs")
 ]

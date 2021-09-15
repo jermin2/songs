@@ -20,11 +20,11 @@
     <div class="container">
         <div class="text-center col-sm-8 m-auto search-div">
             <h2>Songs</h2>
-            <input class="search m-3 p-1 w-100" autofocus placeholder="Type to search"/>
+            <input class="search m-3 p-1 w-100" id="search" autofocus placeholder="Type to search"/>
             <div id="song-list" class="song-item-group">
                 
                 {% for song in songs %}
-                    <div class="song-item" id="{{song.id}}"><a href="{% url 'song' id=song.id %}">{{song.title}}</a></div>
+                    <div class="song-item" id="id-{{song.id}}"><a href="{% url 'song' id=song.id %}">{{song.title}}</a></div>
                 {% empty %}
                     List of songs to appear here
                 {% endfor %}
@@ -32,9 +32,52 @@
             </div>
         </div>
 
-    The index page
-
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("content loaded")
+            load_contents()
+
+            document.querySelector("#search").addEventListener('keyup', event => {
+                searchTerm = document.querySelector('#search').value
+                console.log(searchTerm)
+
+                // i means ignore case
+                let re = new RegExp(searchTerm, 'i')
+                console.log(re)
+
+                // Find all the ones that DON"T match (returns -1)
+                const filtered_list = song_list.filter(song => {
+                    console.log(song.title.search(re))
+                    display = song.title.search(re) >= 0
+                    if (display){
+                        document.querySelector(`#id-${song.id}`).style.display = "block"
+                    }
+                    else
+                        document.querySelector(`#id-${song.id}`).style.display = "none"
+                    return display
+                })
+            })
+
+        })
+        song_list = ""
+        function load_contents() {
+
+            // Send the Json request containing post_id, and content
+            fetch('/fetch_songs', {
+            method: 'GET',
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Print result
+                console.log(result)
+                song_list = result.song_list
+
+            });
+        }
+
+    </script>
 
 {% endblock %}
 
