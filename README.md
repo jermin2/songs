@@ -21,6 +21,8 @@ Authenticated users are able to add/remove/edit Songs and Books. They are also a
 This application is more complex than previous projects due to the relationship and requirement for users to be able to modify Books, which contain Songs. Users must not only be able to add/remove/edit Songs, but users must be able to add and remove songs from Books. Each song can only appear once in a Book.
 Another feature is the search bar, which adds a keyup listener to real-time filter through the titles.
 
+All pages are mobile responsive
+
 ## Features:
 Models:
 * User
@@ -35,42 +37,35 @@ Models:
 
 
 ## Files and Directories
-* Songs
-  * database
-    * static\database
-      * **database.js** - Contains the javascript code for loading songs, adding and removing songs from books, and deleting books
-      * **sidebar.css** - Styling for sidebar 
-      * **styles.css** - Empty
-    * templates\database 
-      * **add.html** - Form for adding/editing a Song
-      * **index.html** - Show all the songs in the database
-      * **song.html** - Show a song
-      * **book_add.html** - Form for adding a Songs to a Book
-      * **book.html** - Show the contents of a book
-      * **books.html** - Show the list of all the books
-      * **favourites.html** - Show all the favourited songs of a user
-      * **layout.html** - Contains the top-nav and side-nav components and used as a base for the other files
-      * **login.html** - Form for logging into the site
-      * **register.html** - Form for registering for the site
-    * admin.py
-    * apps.py
-    * models.py
-    * test.py
-    * urls.py
-    * **views.py** - Contains the handlers for the url and json requests
-  * songs
-  *   asgi.py
-  *   settings.py
-  *   urls.py
-  *   wsgi.py
-*   db.sqlite3
-*   manage.py
-*   .gitignore
+* `Songs` - Main application directory
+  * `database` - Main app directory
+    * `static\database`
+      * `database.js` - Contains the javascript code for loading songs, adding and removing songs from books, and deleting books
+      * `sidebar.css` - Styling for sidebar 
+      * `styles.css` - Empty
+    * `templates\database` 
+      * `add.html` - template for adding or editing a song
+      * `index.html` - template for showing all the songs
+      * `song.html` - template for showing a single song
+      * `book_add.html` - template for adding or remove songs from a book
+      * `book.html` - template for showing the songs in a book
+      * `books.html` - template for showing the list of books
+      * `favourites.html` - template for showing the favourited songs
+      * `layout.html` - Contains the top-nav and side-nav components and used as a base for the other files
+      * `login.html` - template for logging in
+      * `register.html` - template for registering a user for the site
+    * `admin.py` - registered the User, Book, and Song models
+    * `models.py` - contains the three models (User, Book, Song), defines some functions for them, and a custom ManyToMany relationship between Book and Song
+    * `urls.py` - all the application URLS
+    * `views.py` - Contains the handlers for the url and json requests
+*   `db.sqlite3` - the database used by the application
+
 
 
 ## How to run
-No need to install any additional files. You will need to <code>makemigrations</code> and <code>migrate</code> before you run
-<code>python manage.py runserver</code>
+You will need to install `django`. You will need to `python manage.py makemigrations` and `python manage.py migrate` before you run
+`python manage.py runserver`.
+You can optionally create a superuser using `python manage.py createsuperuser`if you want to use the admin interface.
 
 ## Future Work
 The next stage is to support the display of chords in the chordpro format, along with instant transpose. Books should have an index, and Songs in a Book should also be retrievable by their index
