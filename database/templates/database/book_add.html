@@ -10,26 +10,12 @@
 </style>
 
 {{ book.id|json_script:"book_id" }}
+{% if user.is_authenticated %}
+<a href="{% url 'book' id=book.id %}" class="btn btn-outline-primary">Back</a>
+<a href="{% url 'book_delete' id=book.id %}" class="btn btn-outline-secondary" onclick="confirmDeleteBook()">Delete</a>
+<span class="text-muted"><i>Changes are saved automatically</i></span>
+{% endif %}
 <div class="container col-md-12 row">
-    <div class="col-md-6">
-        {% if user.is_authenticated %}
-        <a href="{% url 'book' id=book.id %}" class="btn btn-outline-primary">Back</a>
-        <a href="{% url 'book_delete' id=book.id %}" class="btn btn-outline-secondary" onclick="confirmDeleteBook()">Delete</a>
-        {% endif %}
-
-        <h2>{{book.title}}</h2>
-
-        <div id="book-song-list">
-        {% for record in songsinbook %}
-            <div class="book-item" id="id-{{record.song.id}}" data-id="{{record.song.id}}">{{record.song.title}}</div>
-        {% empty %}
-
-        {% endfor %}
-        </div>
-
-    </div>
-
-
 
     <div class="col-md-6">
         <div class="text-center col-sm-8 m-auto search-div">
@@ -47,18 +33,36 @@
         </div>
 
     </div>
+
+    <div class="col-md-6 text-center">
+
+        <h2>{{book.title}}</h2>
+
+        <div id="book-song-list">
+        {% for record in songsinbook %}
+            <div class="book-item" id="id-{{record.song.id}}" data-id="{{record.song.id}}">{{record.song.title}}</div>
+        {% empty %}
+
+        {% endfor %}
+        </div>
+
+    </div>
+
+
 </div>
 
-<script src="{% static 'database/database.js' %}?v=8"></script>
+<script src="{% static 'database/database.js' %}?v=9"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function(){
-        console.log("loaded")
 
+        // When you click on a song in the song list, it should add it to book or remove it from book
         document.querySelectorAll('.song-item').forEach( element => {
             element.onclick = () => {
-                console.log(element.dataset.id)
+
                 if(!element.classList.contains("selected")){
                     add_song_to_book(element.dataset.id)
+                } else {
+                    remove_song_to_book(element.dataset.id)
                 }
                 
             }
@@ -66,6 +70,7 @@
 
         const song_list = document.querySelector('#song-list')
 
+        // When you click on a song in the book, remove it from the book
         document.querySelectorAll('.book-item').forEach( element => {
             element.onclick = () => {
                 remove_song_to_book(element.dataset.id)

@@ -6,7 +6,7 @@
 
 </style>
 {{ book.id|json_script:"book_id" }}
-<div class="container">
+<div class="m-auto text-center">
     {% if user.is_authenticated %}
     <a href="{% url 'book_edit' id=book.id %}" class="btn btn-outline-primary">Edit</a>
     <a href="{% url 'book_delete' id=book.id %}" class="btn btn-outline-secondary" onclick="confirmDeleteBook()">Delete</a>

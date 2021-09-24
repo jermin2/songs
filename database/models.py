@@ -15,6 +15,12 @@ class Book(models.Model):
     def __str__(self):
         return f'{self.title}({self.songs.count()})'
 
+    def serialize(self):
+        return ({
+            "title" : self.title,
+            "id": self.id
+        })
+
 
 class Song_Book(models.Model):
     song =  models.ForeignKey('Song', on_delete=models.CASCADE, related_name="bookInfo")

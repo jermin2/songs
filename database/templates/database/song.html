@@ -3,11 +3,24 @@
 {% block body %}
 
 <style>
+    .song-content {
+        max-width: 900px;
+        width:500px;
+        border:none;
+        display:block;
+        margin:auto;
+    }
 
+    #song-meta {
+        background-color:lightgray;
+        padding:10px;
+
+    }
 </style>
 
-<div class="container">
+<div class="h-100">
 
+    <div class="song-content my-3">
     {% if user.is_authenticated %}
     <a href="{% url 'edit' id=song.id %}" class="btn btn-outline-primary">Edit</a>
     <a href="{% url 'edit' id=song.id %}" class="btn btn-outline-secondary">Delete</a>
@@ -19,31 +32,39 @@
         <a href="#" id="unfavourite-btn" class="btn btn-outline-secondary"  style="display:none">❤️</a>
         {% endif %}
     {% endif %}
+    </div>
 
-    <div class="title" id="title">{{ song.title }}</div>
-    <div class="content" id="content">{{ song.content }}</div>
-    <div>
-        <div id="author">{{song.author}}</div>
-        <div id="composer">{{song.composer}}</div>
-        <div id="meter">{{song.meter}}</div>
-        <div id="key">{{song.key}}</div>
-        <div id="year">{{song.year}}</div>
+    <div class="title h2 text-center" id="title">{{ song.title }}</div>
+    <textarea class="song-content my-3" id="song-content">{{ song.content }}</textarea>
+
+    <div class="song-content rounded" id="song-meta">
+        <div id="author">Author: {{song.author}}</div>
+        <div id="composer">Composer:{{song.composer}}</div>
+        <div id="meter">Meter: {{song.meter}}</div>
+        <div id="key">Key: {{song.key}}</div>
+        <div id="year">Year: {{song.year}}</div>
     </div>
 </div>
 
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+
+        // Add listener for favourite and unfavourite button
         document.querySelector('#favourite-btn').addEventListener('click', () => {
             favourite("favourite")
         })
         document.querySelector('#unfavourite-btn').addEventListener('click', () => {
             favourite("unfavourite")
         })
+
+        /* https://stackoverflow.com/questions/2803880/is-there-a-way-to-get-a-textarea-to-stretch-to-fit-its-content-without-using-php*/
+        document.getElementById("song-content").style.height = document.getElementById("song-content").scrollHeight+10+'px';
+
     })
 
+    // Send JSON Request to favourite/unfavourite
     function favourite(method) {
-        console.log("favourite this song")
         fetch('/favourite', {
             method: 'POST',
             body: JSON.stringify({
@@ -53,18 +74,18 @@
         })
         .then(response => response.json())
         .then(result => {
-            console.log(result)
-            // Get the status (whether it is favourited or not)
+            // Get the status (whether it is favourited or not) and refresh the favourites list in the side nav
             if (result.favourite === true){
                 document.querySelector("#favourite-btn").style.display = "none"
                 document.querySelector("#unfavourite-btn").style.display = "inline-block"
+                update_favourites_list(result.favourites_list)
             } else {
                 document.querySelector("#unfavourite-btn").style.display = "none"
                 document.querySelector("#favourite-btn").style.display = "inline-block"
+                update_favourites_list(result.favourites_list)
             }
 
         })
-
     }
 </script>
 {% endblock %}

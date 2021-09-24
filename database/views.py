@@ -11,6 +11,7 @@ import json
 
 from .models import User, Song, Book, Song_Book
 
+# Get the list of all the songs
 def index(request):
 
     songs = Song.objects.all()
@@ -18,6 +19,7 @@ def index(request):
         "songs":songs
     })
 
+# The Login View
 def login_view(request):
     if request.method == "POST":
 
@@ -38,11 +40,13 @@ def login_view(request):
     else:
         return render(request, "database/login.html")
 
+# The Logout function
 def logout_view(request):
     logout(request)
     # redirect to a success page
     return HttpResponseRedirect(reverse("index"))
 
+# The register view
 def register_view(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -70,17 +74,16 @@ def register_view(request):
     else:
         return render(request, "database/register.html")
 
+# View a single song
 def song_view(request, id):
 
     song = Song.objects.get(id=id)
-
-    # Check if the user has favourite this song
     favourite = False
+
+    # If user is logged in, return the favourite status in JSON payload
     if request.user.is_authenticated:
         user = User.objects.get(id=request.user.id)
-        print(user.favourites.all())
         favourite = user.favourites.filter(id=id).exists()
-        print(favourite)
 
     return render(request, "database/song.html", {
         "song":song,
@@ -88,25 +91,21 @@ def song_view(request, id):
         "favourite":favourite
     })
 
-
+# View favourites
 @login_required
 def favourites_view(request):
 
-
+    # Get the user object
     user = User.objects.get(id=request.user.id)
 
     # Get all the song and relevant info
     favourites = user.favourites.all()
 
-    print(favourites)
-
     return render(request, "database/favourites.html", {
         "favourites":favourites,
     })
 
-
-
-
+# Edit a song
 @login_required
 def edit(request, id):
     if request.method=="POST":
@@ -174,8 +173,7 @@ def edit(request, id):
             "title":"Edit Song"
         })
 
-
-
+# Add a new song
 @login_required
 def add(request):
 
@@ -224,14 +222,16 @@ def add(request):
         "title": "Add Song",
     })
 
+# JSON Response to get all the songs
 def fetch_songs(request):
 
     # Return a list of songs
     return JsonResponse({
-        "success":"This worked",
+        "success":"Success",
         "song_list":[s.mini_serialize() for s in Song.objects.all()]
     })
 
+# Add a new book
 @login_required
 def add_book(request):
 
@@ -270,6 +270,7 @@ def add_book(request):
         "route": "add_book"
     })
 
+# View a book with all it's songs
 def book_view(request, id):
 
     book = Book.objects.get(id=id)
@@ -282,6 +283,7 @@ def book_view(request, id):
         "book":book,
     })
 
+# View all the books
 def books_view(request):
 
     books = Book.objects.all()
@@ -290,6 +292,7 @@ def books_view(request):
         "books":books
     })
 
+# Edit a book
 @login_required
 def book_edit(request, id):
 
@@ -302,8 +305,8 @@ def book_edit(request, id):
         "songs":Song.objects.all(),
         "book":book
     })
-    return HttpResponse("Edit book")
 
+# JSON Request to put a song in a book
 @login_required
 @csrf_exempt
 def song_to_book(request):
@@ -313,21 +316,14 @@ def song_to_book(request):
 
     # Get new post data
     data = json.loads(request.body)
-    print(data)
-
-
-    # # SHould be able to add
-    # # should be able to remove
-    book_id = data.get("book_id")
-    song_id = data.get("song_id")
 
     # Get the book to change
-    book = Book.objects.get(id=book_id)
+    book = Book.objects.get(id=data.get("book_id"))
 
     # Get the song to change
-    song = Song.objects.get(id=song_id)
+    song = Song.objects.get(id=data.get("song_id"))
 
-    # Add the song to the book
+    # Add or remove the song from the book
     try:
         if data.get("method") == "add":
             book.songs.add(song)
@@ -347,7 +343,7 @@ def song_to_book(request):
         "song":song.mini_serialize()
     })
 
-    
+# Delete a book
 @login_required
 @csrf_exempt
 def book_delete(request, id):
@@ -355,6 +351,7 @@ def book_delete(request, id):
 
     return HttpResponseRedirect(reverse("books"))
 
+# JSON Request to favourite a book
 @login_required
 @csrf_exempt
 def favourite(request):
@@ -364,16 +361,14 @@ def favourite(request):
 
     # Get new post data
     data = json.loads(request.body)
-    print(data)
 
     # Get the user
     user = User.objects.get(id=request.user.id)
-    print(request.user.id)
 
     # Get the song
     song = Song.objects.get(id = int(data.get('song_id')))
 
-    # Add the song to the user's favourites
+    # Add or remove the song from the user's favourites
     try:
         if data.get("method") == "favourite":
             user.favourites.add(song)
@@ -386,22 +381,36 @@ def favourite(request):
             "fail":str(e)
         })
 
-    print(user.favourites.filter(id=song.id).exists())
-
-    # Return JsonResponse of new book list
+    # Return JsonResponse of new favourites list
     return JsonResponse({
         "success":"Success",
         "id": data.get("song_id"),
-        "favourite": user.favourites.filter(id=song.id).exists()
+        "favourite": user.favourites.filter(id=song.id).exists(),
+        "favourites_list": [song.mini_serialize() for song in user.favourites.all()]
+    })
+
+# JSON request to grab the sidebar data
+def sidebar(request):
+
+    favourites = False
+    # Only send favourites data if user is logged in
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        favourites = [song.mini_serialize() for song in user.favourites.all()]
+
+    return JsonResponse({
+        "books":[book.serialize() for book in Book.objects.all()],
+        "favourites": favourites
     })
 
 
-
-
+    
+# DJANGO Form for Book Class
 class BookForm(forms.Form):
     title =     forms.CharField(label='Title',      max_length=100, widget=forms.TextInput(attrs={'class': 'col-md-6 form-control'}))
     year =      forms.IntegerField(label='Year',    required=False, widget=forms.TextInput(attrs={'class':'col-md-6 form-control'}))
 
+# DJANGO Form for Song Class
 class SongForm(forms.Form):
     title =     forms.CharField(label='Title',      max_length=100, widget=forms.TextInput(attrs={'class': 'col-md-6 form-control'}))
     author =    forms.CharField(label='Author',     max_length=100, required=False, widget=forms.TextInput(attrs={'class': 'col-md-6 form-control'}))

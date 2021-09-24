@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("content loaded")
+
+    // Load all the songs
     load_contents()
 
+    // Handle keypress input on the search bar. Should only show ones that match the input
     document.querySelector("#search").addEventListener('keyup', event => {
         searchTerm = document.querySelector('#search').value
-        console.log(searchTerm)
 
         // i means ignore case
         let re = new RegExp(searchTerm, 'i')
-        console.log(re)
 
         // Find all the ones that DON"T match (returns -1)
         const filtered_list = song_list.filter(song => {
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // Choose whether to display
             display = song.title.search(re) >= 0
             if (display){
-                // 
                 songlist.querySelector(`#id-${song.id}`).style.display = "block"
             }
             else
@@ -29,7 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
     })
 
 })
+
 song_list = ""
+
+// Fetch all the songs
 function load_contents() {
 
     // Send the Json request containing post_id, and content
@@ -45,10 +47,8 @@ function load_contents() {
     });
 }
 
-
+// Send JSON request to remove song from book
 function remove_song_to_book(id){
-    console.log("Adding song to book")
-    const song_id = id
     const book_id = JSON.parse(document.getElementById('book_id').textContent);
     fetch('/song_to_book', {
         method: 'POST',
@@ -69,10 +69,8 @@ function remove_song_to_book(id){
     })
 }
 
-
+// Send JSON request to add song to book
 function add_song_to_book(id){
-    console.log("Adding song to book")
-    const song_id = id
     const book_id = JSON.parse(document.getElementById('book_id').textContent);
 
     fetch('/song_to_book', {
@@ -93,7 +91,7 @@ function add_song_to_book(id){
     })
 }
 
-// Create a new HTML element for the book lit
+// Create a new HTML element for a song (in a book)
 function createSongBookElement(song) {
     const e = document.createElement("div")
     e.classList = "book-item"
@@ -113,3 +111,5 @@ function confirmDeleteBook(event){
         return false
     }
 }
+
+

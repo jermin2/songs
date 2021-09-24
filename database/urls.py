@@ -18,5 +18,6 @@ urlpatterns = [
     path('song_to_book', views.song_to_book, name="song_to_book"),
     path('book/<int:id>/delete', views.book_delete, name="book_delete"),
     path('favourite', views.favourite, name="favourite"),
-    path('favourites', views.favourites_view, name="favourites")
+    path('favourites', views.favourites_view, name="favourites"),
+    path('sidebar', views.sidebar, name="sidebar")
 ]
