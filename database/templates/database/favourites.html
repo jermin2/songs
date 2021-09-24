@@ -1,0 +1,22 @@
+{% extends "database/layout.html" %}
+
+{% block body %}
+
+<style>
+
+</style>
+
+<div class="container">
+
+
+    <h2>Favourites</h2>
+
+    {% for song in favourites %}
+        <div class="song" id="id-{{song.id}}"><a href="{% url 'song' id=song.id %}">{{song.title}}</a></div>
+    {% empty %}
+        There are no songs
+    {% endfor %}
+
+</div>
+
+{% endblock %}

@@ -71,20 +71,40 @@ def register_view(request):
         return render(request, "database/register.html")
 
 def song_view(request, id):
-    song = {
-        "title":"My Title",
-        "author":"Mr Author",
-        "meter":"8.8.8.8",
-        "key":"C Major",
-        "year":"1998",
-        "content":"Mary had a little lamb whose fleece was white as snow"
-    }
 
     song = Song.objects.get(id=id)
+
+    # Check if the user has favourite this song
+    favourite = False
+    if request.user.is_authenticated:
+        user = User.objects.get(id=request.user.id)
+        print(user.favourites.all())
+        favourite = user.favourites.filter(id=id).exists()
+        print(favourite)
+
     return render(request, "database/song.html", {
         "song":song,
-        "form":SongForm()
+        "form":SongForm(),
+        "favourite":favourite
     })
+
+
+@login_required
+def favourites_view(request):
+
+
+    user = User.objects.get(id=request.user.id)
+
+    # Get all the song and relevant info
+    favourites = user.favourites.all()
+
+    print(favourites)
+
+    return render(request, "database/favourites.html", {
+        "favourites":favourites,
+    })
+
+
 
 
 @login_required
@@ -103,7 +123,7 @@ def edit(request, id):
             key = form.cleaned_data["key"]
             meter = form.cleaned_data["meter"]
             year = form.cleaned_data["year"]
-            year = int(year) if year != None else ""
+            year = int(year) if year != None else None
             content = form.cleaned_data["content"]
 
             try:
@@ -259,7 +279,7 @@ def book_view(request, id):
 
     return render(request, "database/book.html", {
         "songsinbook":songsinbook,
-        "book":book
+        "book":book,
     })
 
 def books_view(request):
@@ -334,6 +354,48 @@ def book_delete(request, id):
     book = Book.objects.get(id=id).delete()
 
     return HttpResponseRedirect(reverse("books"))
+
+@login_required
+@csrf_exempt
+def favourite(request):
+    if request.method != "POST":
+        print(request)
+        return JsonResponse({"error": "POST request required."}, status=400)
+
+    # Get new post data
+    data = json.loads(request.body)
+    print(data)
+
+    # Get the user
+    user = User.objects.get(id=request.user.id)
+    print(request.user.id)
+
+    # Get the song
+    song = Song.objects.get(id = int(data.get('song_id')))
+
+    # Add the song to the user's favourites
+    try:
+        if data.get("method") == "favourite":
+            user.favourites.add(song)
+        elif data.get("method") == "unfavourite":
+            user.favourites.remove(song)
+        user.save()
+
+    except Exception as e:
+        return JsonResponse({
+            "fail":str(e)
+        })
+
+    print(user.favourites.filter(id=song.id).exists())
+
+    # Return JsonResponse of new book list
+    return JsonResponse({
+        "success":"Success",
+        "id": data.get("song_id"),
+        "favourite": user.favourites.filter(id=song.id).exists()
+    })
+
+
 
 
 class BookForm(forms.Form):

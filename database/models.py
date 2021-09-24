@@ -3,6 +3,7 @@ from django.db import models
 
 # Create your models here.
 class User(AbstractUser):
+    favourites = models.ManyToManyField('Song', related_name="favourited")
     pass
 
 
