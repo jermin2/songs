@@ -1,5 +1,5 @@
 # Songs
-An online database to find/store/edit songs, and sort them into songbooks.
+An online database to find/store/edit songs, and sort them into song books.
 
 A project written in Python, JavaScript, Django as a Final Project for CS50W Web Programming Course 2021
 
@@ -63,9 +63,9 @@ Models:
 
 
 ## How to run
-You will need to install `django`. You will need to `python manage.py makemigrations` and `python manage.py migrate` before you run
-`python manage.py runserver`.
-You can optionally create a superuser using `python manage.py createsuperuser`if you want to use the admin interface.
+* Intialize database by `python manage.py makemigrations` and `python manage.py migrate`
+* Run the server using `python manage.py runserver`.
+* You can optionally create a superuser using `python manage.py createsuperuser`if you want to use the admin interface.
 
 ## Future Work
 The next stage is to support the display of chords in the chordpro format, along with instant transpose. Books should have an index, and Songs in a Book should also be retrievable by their index
