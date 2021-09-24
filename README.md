@@ -1,51 +1,65 @@
-# songs
+# Songs
+An online database to find/store/edit songs, and sort them into songbooks.
 
-## Distinctiveness and Complexity
-### Real-time search bar
-JSON Queries:
+A project written in Python, JavaScript, Django as a Final Project for CS50W Web Programming Course 2021
+
+## Features:
+Songs can have the following meta-data
+- Author
+- Composer
+- Meter
+- Key
+- Year
+
+Songs can also be grouped via a Book. 
+
+A Book can have many songs (but only one of each). User must be able to click through to a song from a book. A book also has a title and a year
+
+Authenticated users are able to add/remove/edit Songs and Books. They are also able to favourite songs to a favourites list which is displayed on the side-nav. Unauthenticated users can view songs and books.
+
+# Distinctiveness and Complexity
+This application is more complex than previous projects due to the relationship and requirement for users to be able to modify Books, which contain Songs. Users must not only be able to add/remove/edit Songs, but users must be able to add and remove songs from Books. Each song can only appear once in a Book.
+Another feature is the search bar, which adds a keyup listener to real-time filter through the titles.
+
+## Features:
+Models:
+* User
+* Book
+* Song
+
+## JSON Queries:
 * Add/remove favourites
 * Add/remove songs from books
 * "search as you type" style search bar
-
-# add.html
-Form for adding/editing a Song
-
-# book_add.html
-Form for adding a Songs to a Book
-
-# book.html
-Show the contents of a book
-
-# books.html
-Show the list of all the books
-
-# favourites.html
-Show all the favourited songs of a user
-
-# index.html
-Show all the songs in the database
-
-# layout.html
-Contains the top-nav and side-nav components and used as a base for the other files
-
-# login.html
-Form for logging into the site
-
-# register.html
-Form for registering for the site
-
-# song.html
-Show a song
+* Loading of songs and sidebar lists
 
 
-Under its own header within the README called Distinctiveness and Complexity: Why you believe your project satisfies the distinctiveness and complexity requirements, mentioned above.
-What’s contained in each file you created.
-How to run your application.
-Any other additional information the staff should know about your project.
+## File Contents
+### Song
+* **add.html** - Form for adding/editing a Song
+* **index.html** - Show all the songs in the database
+* **song.html** - Show a song
+* 
+### Book
+* **book_add.html** - Form for adding a Songs to a Book
+* **book.html** - Show the contents of a book
+* **books.html** - Show the list of all the books
 
+### Misc
+* **favourites.html** - Show all the favourited songs of a user
+* **layout.html** - Contains the top-nav and side-nav components and used as a base for the other files
+* **login.html** - Form for logging into the site
+* **register.html** - Form for registering for the site
 
-Your web application must be sufficiently distinct from the other projects in this course (and, in addition, may not be based on the old CS50W Pizza project), and more complex than those.
-A project that appears to be a social network is a priori deemed by the staff to be indistinct from Project 4, and should not be submitted; it will be rejected.
-A project that appears to be an e-commerce site is strongly suspected to be indistinct from Project 2, and your README.md file should be very clear as to why it’s not. Failing that, it should not be submitted; it will be rejected.
-Your web application must utilize Django (including at least one model) on the back-end and JavaScript on the front-end.
-Your web application must be mobile-responsive.
+### Styling and Javascript
+* **database.js** - Contains the javascript code for loading songs, adding and removing songs from books, and deleting books
+* **sidebar.css** - Styling for sidebar 
+* **styles.css** - Empty
+* **views.py** - Contains the handlers for the url and json requests
+
+## How to run
+No need to install any additional files. You will need to <code>makemigrations</code> and <code>migrate</code> before you run
+<code>python manage.py runserver</code>
+
+## Future Work
+The next stage is to support the display of chords in the chordpro format, along with instant transpose. Books should have an index, and Songs in a Book should also be retrievable by their index
